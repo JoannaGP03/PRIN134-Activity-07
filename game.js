@@ -17,9 +17,9 @@ function chance() {
     return Math.random() * 0.5 + 0.5; 
 }
 
-function gamePlay(players, attemptsOfEach, round = 1) {
+function gamePlay(players, attemptsOfEach, round) {
     console.log(`\n🏀 Round ${round} Begins!`);
-    
+
     players.forEach(player => {
         let successRate = chance();
         let shots = 0;
@@ -38,7 +38,7 @@ function standings(players) {
     return players.sort((a, b) => b.score - a.score);
 }
 
-function playerWinners(players) {
+function playerWinners(players, round = 1) {
     let topScore = players[0].score;
     let winners = players.filter(player => player.score === topScore);
 
@@ -49,14 +49,13 @@ function playerWinners(players) {
 
     if (winners.length > 1) {
         console.log("\n🔥 Tie-breaker needed between: ", winners.map(p => p.name).join(", "));
-        tieBreaker(winners);
+        tieBreaker(winners, round + 1); 
     } else {
         console.log(`\n🏆 The champion is ${winners[0].name} with ${winners[0].score} points! `);
     }
 }
 
-
-function tieBreaker(players, round = 2) {
+function tieBreaker(players, round) {
     while (players.length > 1) {
         console.log(`\n🔥 Tiebreaker Round ${round} Begins!`);
         
@@ -64,20 +63,17 @@ function tieBreaker(players, round = 2) {
         gamePlay(players, 5, round);
         standings(players);
         
-        playerWinners(players); 
-        
-        
         let topScore = players[0].score;
         players = players.filter(player => player.score === topScore);
 
-        // Increase round number if still tied
+        // If another tiebreaker is needed.
         if (players.length > 1) {
+            console.log("\n🔁 Another tiebreaker round is needed!");
             round++; 
-            console.log("🔁 Another tiebreaker round needed!");
-        } else {
-            return; 
         }
     }
+
+    console.log(`\n🏆 The final champion is ${players[0].name} with ${players[0].score} points!`);
 }
 
 let players = [
@@ -89,6 +85,6 @@ let players = [
 ];
 
 console.log("🏀 Game Start!");
-gamePlay(players, 10); 
+gamePlay(players, 10, 1); 
 standings(players);
-playerWinners(players);
+playerWinners(players, 1); 
